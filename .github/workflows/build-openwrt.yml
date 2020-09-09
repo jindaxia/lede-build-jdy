@@ -11,6 +11,12 @@
 name: Build OpenWrt
 
 on:
+  workflow_dispatch:
+    inputs:
+      ssh_flag:
+        description: 'set to true if use ssh actions'
+        required: true
+        default: 'false'
   repository_dispatch:
   release:
     types: published
@@ -21,8 +27,8 @@ on:
       - '.config'
 #  schedule:
 #    - cron: 0 8 * * 5
-  watch:
-    types: started
+#  watch:
+#    types: started
 
 env:
   REPO_URL: https://github.com/coolsnowwolf/lede
@@ -34,8 +40,8 @@ env:
   SSH_ACTIONS: false
   UPLOAD_BIN_DIR: false
   UPLOAD_FIRMWARE: true
-  UPLOAD_COWTRANSFER: true
-  UPLOAD_WETRANSFER: false
+  UPLOAD_COWTRANSFER: false
+  UPLOAD_WETRANSFER: true
   TZ: Asia/Shanghai
 
 jobs:
@@ -90,7 +96,7 @@ jobs:
 
     - name: SSH connection to Actions
       uses: P3TERX/debugger-action@main
-      if: env.SSH_ACTIONS == 'true' || contains(github.event.action, 'ssh')
+      if: env.SSH_ACTIONS == 'true' || github.event.inputs.ssh_flag == 'true'
 
     - name: Download package
       id: package
